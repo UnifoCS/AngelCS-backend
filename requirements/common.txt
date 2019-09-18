@@ -1,0 +1,6 @@
+# for web service
+flask
+
+# for machine learning services
+tensorflow
+keras

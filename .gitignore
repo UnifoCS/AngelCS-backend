@@ -1,0 +1,18 @@
+
+# log file, pid file
+log/
+*.log
+*.pid
+
+
+# Critical Files
+configs/release.py
+
+
+# python build files
+__pycache__/
+*.py[cdo]
+
+
+# Editor configurations
+.vscode/
