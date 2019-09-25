@@ -1,3 +1,4 @@
+import api.globals as g
 from flask.blueprints import Blueprint
 import random
 
@@ -10,21 +11,24 @@ bp = Blueprint(__name__, __name__)
 @json_api
 def get_review_list():
     # TODO: Not implemented
-    items = []
-    for i in range(1, 30):
-        item = {
-            "id": i, # Review ID(int)
-            "author": f"Test-{i}", # 리뷰 작성자 이름(string)
-            "score": random.random() * 5, # 점수(int)
-            "updated_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 변경일(변경하지 않았을 경우 created_at과 동일한 값)
-            "created_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 작성일
-            "is_replied": False, # (boolean) 이미 답변이 달렸는가
-            "tags": [ # 태그 목록, 없으면 빈 목록
-                { "id": 1234, "name": "긍정" },
-                { "id": 1235, "name": "질문" }
-            ]
-        }
-        items.append(item)
+    items = g.app.services.review.get_review_list()
+    # for i in range(1, 30):
+    #     item = {
+    #         "id": i, # Review ID(int)
+    #         "author": f"Test-{i}", # 리뷰 작성자 이름(string)
+    #         "score": random.random() * 5, # 점수(int)
+    #         "updated_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 변경일(변경하지 않았을 경우 created_at과 동일한 값)
+    #         "created_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 작성일
+    #         "is_replied": False, # (boolean) 이미 답변이 달렸는가
+    #         "tags": [ # 태그 목록, 없으면 빈 목록
+    #             { "id": 1234, "name": "긍정" },
+    #             { "id": 1235, "name": "질문" }
+    #         ]
+    #     }
+    #     items.append(item)
+
+    # items = [ x.__dict__ for x in items ]
+    # print(items)
     return items
 
 

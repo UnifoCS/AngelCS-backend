@@ -2,10 +2,11 @@ import logging
 import os
 import types
 
-from flask import Flask
+from flask import Flask, g
 
 import configs
 from .util.text import convert_camel_to_snake
+from .util.encoder import CustomJSONEncoder
 
 
 class App:
@@ -15,10 +16,13 @@ class App:
     def __init__(self):
         self.config = configs.from_arg_module()
         self.flask.config.from_object(self.config)
+        self.flask.json_encoder = CustomJSONEncoder
         self.init_logging()
         self.load_services()
         self.load_views()
-        
+
+        from . import globals
+        globals.init(self)
 
     def init_logging(self):
         logging.basicConfig(filename=self.config["LOG_FILE"],level=self.config["LOG_LEVEL"])
