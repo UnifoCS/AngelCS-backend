@@ -1,5 +1,6 @@
 # for web service
 flask
+sqlalchemy
 
 # for machine learning services
 tensorflow

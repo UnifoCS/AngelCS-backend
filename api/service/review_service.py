@@ -1,21 +1,7 @@
-from . import BaseService
+from .sqlalchemy import BaseDatabaseService
 
 
-class ReviewService(BaseService):
-    
-
-    def get_review(self, id):
-        pass
-
-    def get_review_list(self, count, index):
-        pass
-
-    def reply_review(self, id, reply):
-        pass
-
-
-
-class ReviewServiceImpl(ReviewService):
+class ReviewService(BaseDatabaseService):
 
     def get_review(self, id):
         pass
@@ -25,3 +11,4 @@ class ReviewServiceImpl(ReviewService):
 
     def reply_review(self, id, reply):
         pass
+

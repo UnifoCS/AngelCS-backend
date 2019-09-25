@@ -4,6 +4,8 @@ log/
 *.log
 *.pid
 
+# tmp files
+tmp/
 
 # Critical Files
 configs/release.py

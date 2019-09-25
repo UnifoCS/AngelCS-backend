@@ -15,12 +15,9 @@ def from_arg_module():
         from . import release
         return release.ReleaseConfig()
 
-    elif config == "debug":
+    else:
         from . import debug
         return debug.DebugConfig()
-
-    else:
-        return DefaultConfig()
 
 
 class DefaultConfig(dict):
@@ -32,6 +29,7 @@ class DefaultConfig(dict):
 
     # 
     # See SQLAlchemy URI Format
+    DATABASE_ECHO = False
     DATABASE_URI = None
 
     # SQLALCHEMY Configs
@@ -51,3 +49,8 @@ class DefaultConfig(dict):
         for k, v in obj.items():
             setattr(self, k, v)
 
+    def __getitem__(self, key):
+        if hasattr(self, key):
+            return getattr(self, key)
+        else:
+             return None
