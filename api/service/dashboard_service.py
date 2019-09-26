@@ -1,15 +1,18 @@
 from datetime import timedelta
 
+from sqlalchemy import func
+
 from .sqlalchemy import BaseDatabaseService
+from ..model.sqlalchemy import Review
 
 
 class DashboardService(BaseDatabaseService):
 
     def get_review_count(self):
-        return 2343
+        return self.query(func.count(Review.id)).scalar()
 
     def get_review_count_unreplied(self):
-        return 1000
+        return self.query(func.count(Review.id)).filter_by(is_replied=False).scalar()
 
     def get_review_average_by_days(self, from_date, to_date):
         dt = from_date
