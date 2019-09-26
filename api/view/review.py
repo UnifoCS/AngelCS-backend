@@ -28,11 +28,11 @@ def get_review_list():
         }
         items.append(item)
     """
-    page = request.args.get('page', 1)
-    page_size = request.args.get('page_size', 30)
+    page = (int(request.args.get('page')) or 1) - 1
+    page_size = int(request.args.get('page_size')) or 30
     sort = request.args.get('sort', 'updated_date')
     order = request.args.get('order', 'desc')
-    filter = request.args.get('filter')
+    filter = request.args.get('filter', None)
 
     items = g.app.services.review.get_review_list(
         index=page * page_size,

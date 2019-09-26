@@ -8,7 +8,7 @@ class SQLAlchemyService(BaseService):
     
     def __init__(self, app):
         super().__init__(app)
-        self.engine = create_engine(app.config["DATABASE_URI"])
+        self.engine = create_engine(app.config["DATABASE_URI"], echo=True)#echo=app.config.get("DATABASE_ECHO", False))
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
