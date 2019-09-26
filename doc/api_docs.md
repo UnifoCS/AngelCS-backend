@@ -50,18 +50,19 @@ GET /reviews/{page}?page_size={int}&sort={enum}&order={enum}&filter={enum}
 ```
 ### Parameters
 
-- page (Integer): 1부터 시작
+- page (Integer): 1부터 시작, 기본값 1
 - page_size(Integer): 기본값 30
 - sort(Enum): 정렬, 아래 값 중 하나
-    - updated_at (Default)
-    - created_at
-    - score
+    - updated_date (Default)
+    - created_date
+    - rating
 - order(Enum): 정렬 차순, 아래 값 중 하나
     - desc (Default): 내림차순
     - asc: 오름차순
 - filter(Optional)
     - replied: 답글 달린 것만
     - unreplied: 답글 안달린 것만
+    - 값 없음 (기본): 필터링 안함.
 
 ### 결과
 

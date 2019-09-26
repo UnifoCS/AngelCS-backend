@@ -1,6 +1,7 @@
 from flask.blueprints import Blueprint
 
 from . import json_api
+import api.globals as g
 
 bp = Blueprint(__name__, __name__)
 
@@ -8,6 +9,7 @@ bp = Blueprint(__name__, __name__)
 @bp.route("/templates")
 @json_api
 def get_templates():
+    """
     return [
         {
             "id": 123, # (int) 템플릿 ID
@@ -19,3 +21,9 @@ def get_templates():
             ]
         }
     ]
+    """
+    
+    templates = g.app.services.template.get_all_templates()
+    return [x.as_dict(conditions=True) for x in templates]
+
+    

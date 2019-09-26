@@ -1,6 +1,7 @@
+from collections import OrderedDict
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint, Index
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint, Index, Boolean
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import FetchedValue
@@ -12,10 +13,12 @@ Base = declarative_base()
 
 class BaseModel():
     __mapper_args__= {'always_refresh': True}
+    
 
     @declared_attr
     def __tablename__(cls):
         return convert_camel_to_snake(cls.__name__)
+
 
 
 class IdMixin():
@@ -24,7 +27,7 @@ class IdMixin():
 
 class TimestampMixin():
     created_date = Column(DateTime, default=datetime.utcnow())
-    updated_date = Column(DateTime, onupdate=datetime.utcnow())
+    updated_date = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
 
 
 
@@ -42,6 +45,18 @@ class User(Base, BaseModel, IdMixin, TimestampMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def as_dict(self, channels=False):
+        d = {
+            'id': self.id,
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
+            'name': self.name,
+            'email': self.email
+        }
+        if channels:
+            d['channels'] = [x.as_dict() for x in self.channels]
+        return d
 
 
 class ReferenceUserMixin:
@@ -63,6 +78,16 @@ class Channel(Base, BaseModel, IdMixin, TimestampMixin):
     # get all reviews of this channel
     reviews = relationship("Review", backref="channel")
 
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
+            'name': self.name,
+            'provider': self.provider
+        }
+
+
 class ReferenceChannelMixin():
     @declared_attr
     def channel_id(cls):
@@ -81,9 +106,27 @@ class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
     title = Column(String(64), nullable=False)
     content = Column(String(1024), nullable=False)
     rating = Column(Integer, nullable=False, index=True)
+    
+    is_replied = Column(Boolean, nullable=False, index=True, default=False)
+    reply = Column(String)
 
     # get tags of this review
     tags = relationship('Tag', secondary='link_review_tag')
+
+    def as_dict(self, tags=False):
+        d = {
+            'id': self.id,
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
+            'title': self.title,
+            'content': self.content,
+            'rating': self.rating,
+            'is_replied': self.is_replied,
+            'reply': self.reply
+        }
+        if tags:
+            d['tags'] = [x.as_dict() for x in self.tags]
+        return d
 
 class ReferenceReviewMixin():
     @declared_attr
@@ -96,6 +139,12 @@ class Tag(Base, BaseModel, IdMixin, TimestampMixin):
     name = Column(String(32), nullable=False)
     
     reviews = relationship('Tag', secondary='link_review_tag')
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
 class LinkReviewTag(Base, BaseModel, IdMixin):
     review_id = Column(Integer, ForeignKey('review.id'), nullable=False)
@@ -113,6 +162,19 @@ class Template(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
 
     conditions = relationship("TemplateCondition", backref="template")
 
+
+    def as_dict(self, conditions=False):
+        d = {
+            'id': self.id,
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
+            'name': self.name,
+            'content': self.content
+        }
+        if conditions:
+            d['conditions'] = [x.as_dict() for x in self.conditions]
+        return d
+
 class ReferenceTemplateMixin():
     @declared_attr
     def template_id(cls):
@@ -123,3 +185,13 @@ class TemplateCondition(Base, BaseModel, IdMixin, ReferenceTemplateMixin):
     operand1 = Column(String)
     operand2 = Column(String)
     operator = Column(String(16), nullable=False)
+
+    def as_dict(self, conditions=False):
+        d = {
+            'id': self.id,
+            'index': self.index,
+            'operand1': self.operand1,
+            'operand2': self.operand2,
+            'operator': self.operator
+        }
+        return d

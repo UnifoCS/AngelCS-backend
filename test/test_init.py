@@ -3,7 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
-from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel
+from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel, TemplateCondition, Template
 from api import App
 
 import pandas as pd
@@ -36,6 +36,21 @@ negative_tag = Tag(name="부정")
 
 session.add(positive_tag)
 session.add(negative_tag)
+session.commit()
+
+# 템플릿을 추가합니다.
+positive_temp = Template(name="감사 리뷰 템플릿", content="Thank you [name], We will keep doing our best :)", channel_id=channel.id)
+positive_temp_cond = TemplateCondition(index=0, operand1="tag", operator="=", operand2=f"{positive_tag.id}")
+positive_temp.conditions.append(positive_temp_cond)
+
+negative_temp = Template(name="사과 리뷰 템플릿", content="Sorry [name], We will try more for better service.", channel_id=channel.id)
+negative_temp_cond = TemplateCondition(index=0, operand1="tag", operator="=", operand2=f"{negative_tag.id}")
+negative_temp.conditions.append(negative_temp_cond)
+
+session.add_all([
+    positive_temp,
+    negative_temp
+])
 session.commit()
 
 

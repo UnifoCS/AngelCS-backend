@@ -27,3 +27,6 @@ class BaseDatabaseService(BaseService):
 
     def query(self, *vargs):
         return self.db.query(*vargs)
+
+    def commit(self):
+        self.db.commit()
