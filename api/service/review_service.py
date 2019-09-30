@@ -1,4 +1,4 @@
-from .sqlalchemy import BaseDatabaseService
+from .sqlalchemy_service import BaseDatabaseService
 from ..model.sqlalchemy import Review
 
 

@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from sqlalchemy import func
 
-from .sqlalchemy import BaseDatabaseService
+from .sqlalchemy_service import BaseDatabaseService
 from ..model.sqlalchemy import Review
 
 
