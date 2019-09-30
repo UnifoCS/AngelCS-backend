@@ -18,26 +18,41 @@ GET /dashboard
 - 성공 200
 ```json
 [
-{
-	"type": "review_count", 
-	"item": {
-		"review_total_count": 10000,
-		"review_replied_count": 1000,
-	}
-},
-{
-	"type": "review_average",
-	"item": {
-		"review_average_score": 3.5, # 리뷰 평균
-		"review_average_history": [ # 리뷰 내역
-			{ "date": "yyyy-MM-dd", "score": 3.5  },
-		{ "date": "yyyy-MM-dd", "score": 3.4  },
-		{ "date": "yyyy-MM-dd", "score": 3.3  },
-		{ "date": "yyyy-MM-dd", "score": 3.2  },
-		{ "date": "yyyy-MM-dd", "score": 3.1  }
-		]
-	}
-}
+  {
+    "item": {
+      "review_replied_count": 200,
+      "review_total_count": 6178
+    },
+    "type": "review_count"
+  },
+  {
+    "item": {
+      "review_average_history": [
+        {
+          "date": "2019-09-26",
+          "rating": 3.0
+        },
+        {
+          "date": "2019-09-27",
+          "rating": 3.2
+        },
+        {
+          "date": "2019-09-28",
+          "rating": 3.4
+        },
+        {
+          "date": "2019-09-29",
+          "rating": 3.6
+        },
+        {
+          "date": "2019-09-30",
+          "rating": 3.8
+        }
+      ],
+      "review_average_score": 3.5
+    },
+    "type": "review_average"
+  }
 ]
 ```
 # 리뷰
@@ -74,7 +89,7 @@ Content-Type: application/json
 {
 	"id": 123, # Review ID(int)
 	"author": "", # 리뷰 작성자 이름(string)
-	"score": 5, # 점수(int)
+	"rating": 5, # 점수(int)
 	"updated_at": "yyyy-MM-dd", # (date, yyyy-MM-dd) 리뷰 변경일(변경하지 않았을 경우 created_at과 동일한 값)
 	"created_at": "yyyy-MM-dd", # (date, yyyy-MM-dd) 리뷰 작성일
 	"is_replied": false, # (boolean) 이미 답변이 달렸는가
@@ -107,7 +122,7 @@ Parameter
 	"id": 123, # 리뷰 ID(int)
 	"author": "", # 리뷰 작성자 이름(string)
 	"content": "리뷰 내용", # 리뷰 내용(string)
-	"score": 5, # 점수(int)
+	"rating": 5, # 점수(int)
 	"updated_at": "yyyy-MM-dd", # (date, yyyy-MM-dd) 리뷰 변경일(변경하지 않았을 경우 created_at과 동일한 값)
 	"created_at": "yyyy-MM-dd", # (date, yyyy-MM-dd) 리뷰 작성일
 	"is_replied": false, # (boolean) 이미 답변이 달렸는가
@@ -151,7 +166,7 @@ No Result
 - 실패 400
 ```json
 {
-	"message": "ㅁㄴㅇㄹ"
+	"message": "ㅁㄴㅇㄹ",
 	"error_code": 123,
 	"error_name": "NO_REQUIRED_FIELD"
 }
@@ -168,16 +183,39 @@ No Result
 ### 응답
 ```json
 # 템플릿 목록입니다.
+
 [
-{
-	"id": 123, # (int) 템플릿 ID
-	"name": "악플러용", # 제목
-	"content": "안녕하세요 [name]님. ...", # 내용
-	"conditions": [ # 템플릿이 적용되기 위한 조건
-		{ "type": "tag", "tag_id": 1234 }, 
-		{ "type": "score", "operator": ">=", "operand": 3 } 
-	]
-},
-... # 이하 동일 포멧
+  {
+    "conditions": [
+      {
+        "id": 1,
+        "index": 0,
+        "operand1": "tag",
+        "operand2": "1",
+        "operator": "="
+      }
+    ],
+    "content": "Thank you [name], We will keep doing our best :)",
+    "created_date": "2019-09-26T12:48:13.932368",
+    "id": 1,
+    "name": "감사 리뷰 템플릿",
+    "updated_date": "2019-09-26T12:48:13.932489"
+  },
+  {
+    "conditions": [
+      {
+        "id": 2,
+        "index": 0,
+        "operand1": "tag",
+        "operand2": "2",
+        "operator": "="
+      }
+    ],
+    "content": "Sorry [name], We will try more for better service.",
+    "created_date": "2019-09-26T12:48:13.932368",
+    "id": 2,
+    "name": "사과 리뷰 템플릿",
+    "updated_date": "2019-09-26T12:48:13.932489"
+  }
 ]
 ```
