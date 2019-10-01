@@ -13,8 +13,8 @@ class App:
     flask = Flask(__name__)
     services = types.SimpleNamespace()
 
-    def __init__(self):
-        self.config = configs.from_arg_module()
+    def __init__(self, config=configs.from_arg_module()):
+        self.config = config
         self.flask.config.from_object(self.config)
         self.flask.json_encoder = CustomJSONEncoder
         self.init_logging()

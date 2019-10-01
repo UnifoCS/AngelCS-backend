@@ -15,29 +15,32 @@ def from_arg_module():
         from . import release
         return release.ReleaseConfig()
 
-    else:
+    elif config == "debug":
         from . import debug
         return debug.DebugConfig()
+
+    else:
+        return DefaultConfig()
 
 
 class DefaultConfig(dict):
     APP_NAME = "angelcs_api"
     
     DEBUG = False
-    HOST = "127.0.0.1"  # 0.0.0.0 to public
+    HOST = "0.0.0.0"  # 0.0.0.0 to public
     PORT = 8080         # port number
 
     # 
     # See SQLAlchemy URI Format
     DATABASE_ECHO = False
-    DATABASE_URI = None
+    DATABASE_URI = "sqlite:///tmp/sqlite.db"
 
     # SQLALCHEMY Configs
 
 
     # Log Level
     # see logging level details at [URL]
-    LOG_LEVEL = "DEBUG"
+    LOG_LEVEL = "INFO"
     LOG_FILE = f"./log/{APP_NAME}.log"
 
 

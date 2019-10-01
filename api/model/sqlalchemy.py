@@ -108,6 +108,7 @@ class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
     rating = Column(Integer, nullable=False, index=True)
     
     is_replied = Column(Boolean, nullable=False, index=True, default=False)
+    is_aggressive = Column(Boolean, nullable=False, index=True, default=False)
     reply = Column(String)
 
     # get tags of this review
