@@ -3,6 +3,7 @@ import os
 import types
 
 from flask import Flask, g
+from flask_cors import CORS
 
 import configs
 from .util.text import convert_camel_to_snake
@@ -14,6 +15,8 @@ class App:
     services = types.SimpleNamespace()
 
     def __init__(self, config=configs.from_arg_module()):
+        CORS(self.flask)
+        
         self.config = config
         self.flask.debug = self.config.DEBUG
 
