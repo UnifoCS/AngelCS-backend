@@ -33,7 +33,7 @@ class DefaultConfig(dict):
     # 
     # See SQLAlchemy URI Format
     DATABASE_ECHO = False
-    DATABASE_URI = "sqlite:///tmp/sqlite.db"
+    DATABASE_URI = "sqlite:///tmp/sqlite3.db"
 
     # SQLALCHEMY Configs
 

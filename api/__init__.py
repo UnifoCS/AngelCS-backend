@@ -15,6 +15,8 @@ class App:
 
     def __init__(self, config=configs.from_arg_module()):
         self.config = config
+        self.flask.debug = self.config.DEBUG
+
         self.flask.config.from_object(self.config)
         self.flask.json_encoder = CustomJSONEncoder
         self.init_logging()
