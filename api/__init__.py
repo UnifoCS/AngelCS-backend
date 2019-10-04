@@ -18,6 +18,8 @@ class App:
         CORS(self.flask)
         
         self.config = config
+        self.flask.debug = self.config.DEBUG
+
         self.flask.config.from_object(self.config)
         self.flask.json_encoder = CustomJSONEncoder
         self.init_logging()

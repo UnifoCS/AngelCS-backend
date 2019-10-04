@@ -6,7 +6,7 @@ import argparse
 # release, debug 외에 다른 config를 여기에 추가
 def from_arg_module():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="debug", type=str)
+    parser.add_argument("--config", type=str)
     args = parser.parse_args()
 
     config = args.config
@@ -33,7 +33,7 @@ class DefaultConfig(dict):
     # 
     # See SQLAlchemy URI Format
     DATABASE_ECHO = False
-    DATABASE_URI = "sqlite:///tmp/sqlite.db"
+    DATABASE_URI = "sqlite:///tmp/sqlite3.db"
 
     # SQLALCHEMY Configs
 
