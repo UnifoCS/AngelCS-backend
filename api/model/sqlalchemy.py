@@ -104,6 +104,7 @@ class LinkUserChannel(Base, BaseModel, IdMixin):
 
 class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
     title = Column(String(64), nullable=False)
+    author = Column(String(32), nullable=False)
     content = Column(String(1024), nullable=False)
     rating = Column(Integer, nullable=False, index=True)
     
@@ -120,6 +121,7 @@ class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
             'created_date': self.created_date.isoformat(),
             'updated_date': self.updated_date.isoformat(),
             'title': self.title,
+            'author': self.author,
             'content': self.content,
             'rating': self.rating,
             'is_replied': self.is_replied,

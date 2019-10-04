@@ -2,13 +2,14 @@ import math
 from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel, TemplateCondition, Template
 from api import App
 from configs import DefaultConfig
+from configs.debug import DebugConfig
 
 import pandas as pd
 import sklearn
 
 
 def test():
-    app = App(DefaultConfig())
+    app = App(DebugConfig())
     sql_alchemy = app.services.sql_alchemy
     session = sql_alchemy.session
 
@@ -31,6 +32,7 @@ def test():
     # 긍정, 부정 태그를 추가합니다.
     positive_tag = Tag(name="긍정")
     negative_tag = Tag(name="부정")
+    question_tag = Tag(name="질문")
 
     session.add(positive_tag)
     session.add(negative_tag)
@@ -54,11 +56,15 @@ def test():
 
     data = pd.read_csv("test/data/samples.csv")
     data = sklearn.utils.shuffle(data)
+    print(data)
 
     for i in data.index:
         title=data.loc[i, 'Title']
+        author = data.loc[i, 'Author']
         content=data.loc[i, 'Text']
-        rating=data.loc[i, 'Rating']
+        rating=int(data.loc[i, 'Rating'])
+
+        print(rating)
 
         if math.isnan(rating) or \
             (type(title) is float and math.isnan(title)) \
@@ -67,17 +73,21 @@ def test():
 
         review = Review(
             title=title,
+            author=author,
             content=content,
             rating=rating,
             channel_id=channel.id
         )
-        sentiment = data.loc[i, 'sum']
+        sentiment = data.loc[i, 'pos/neg 예측']
         review.is_aggressive = data.loc[i, '욕설여부'] == '욕설'
 
-        if sentiment >= 0.5:
+        if sentiment == '긍정':
             review.tags.append(positive_tag)
-        elif sentiment <= 0.5:
+        elif sentiment == '부정':
             review.tags.append(negative_tag)
+        
+        if '?' in review.content or '?' in review.title:
+            review.tags.append(question_tag)
 
         session.add(review)
 
