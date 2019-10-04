@@ -123,7 +123,8 @@ class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
             'content': self.content,
             'rating': self.rating,
             'is_replied': self.is_replied,
-            'reply': self.reply
+            'reply': self.reply,
+            'is_aggressive': self.is_aggressive
         }
         if tags:
             d['tags'] = [x.as_dict() for x in self.tags]
