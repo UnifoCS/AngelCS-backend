@@ -7,6 +7,12 @@ from ..model.sqlalchemy import Review
 
 
 class DashboardService(BaseDatabaseService):
+    """
+        대시보드와 관련된 기능을 수행하는 클래스
+        - 대시보드 통계 분석 및 저장.
+        - 대시보드 통계 Export
+    """
+
 
     def get_review_count(self):
         return self.query(func.count(Review.id)).scalar()

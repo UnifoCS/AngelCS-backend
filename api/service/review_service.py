@@ -3,7 +3,17 @@ from ..model.sqlalchemy import Review
 
 
 class ReviewService(BaseDatabaseService):
+    """
+    리뷰와 관련된 기능을 제공하는 서비스
+    - 리뷰 검색
+    - 리뷰 가져오기
+    - 리뷰 삭제, 추가 등
+    - 리뷰에 답글 달기
+    - 리뷰 분석
 
+    """
+    
+    
     def get_review(self, id):
         return self.query(Review).filter_by(id=id).first()
 

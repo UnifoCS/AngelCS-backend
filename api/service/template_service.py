@@ -3,7 +3,11 @@ from ..model.sqlalchemy import Template, Tag, TemplateCondition
 
 
 class TemplateService(BaseDatabaseService):
-
+    """
+        리뷰 템플릿과 관련된 기능을 수행하는 클래스
+        - 템플릿 생성, 삭제, 수정
+        - 템플릿 가져오기
+    """ 
 
     def get_all_templates(self):
         templates = self.query(Template).all()
