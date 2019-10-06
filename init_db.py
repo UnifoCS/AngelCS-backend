@@ -1,5 +1,8 @@
 """
-연결된 DB에
+연결된 DB에 테이블을 생성합니다.
+사용법
+
+> python init_db.py
 
 """
 import sqlalchemy

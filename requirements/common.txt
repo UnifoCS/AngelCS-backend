@@ -2,7 +2,3 @@
 flask
 sqlalchemy
 flask-cors
-
-# for machine learning services
-# tensorflow
-# keras

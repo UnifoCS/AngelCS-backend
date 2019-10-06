@@ -1,4 +1,8 @@
 # AngelCS Backend server
+## 자세한 구조 문서
+[REST API Reference](./doc/api_docs.md)<br>
+<br>
+[코드 가이드라인](./doc/code_structure.md)<br>
 
 ## Requirements
 | Module | Version |
@@ -22,7 +26,7 @@ class ReleaseConfig(configs.DefaultConfig):
     DATABASE_URI = "mysql+pymysql:///..."
 
 ```
-[doc/configuration.md]()에서 자세한 설정 방법을 안내해드립니다.
+[./doc/configuration.md]()에서 자세한 설정 방법을 안내해드립니다.
 
 ## Installation
 목적에 따라 debug나 release를 선택할 수 있습니다.
