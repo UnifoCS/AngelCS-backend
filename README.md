@@ -26,7 +26,7 @@ class ReleaseConfig(configs.DefaultConfig):
     DATABASE_URI = "mysql+pymysql:///..."
 
 ```
-[./doc/configuration.md]()에서 자세한 설정 방법을 안내해드립니다.
+[설정 안내 문서](./doc/configuration.md)에서 자세한 설정 방법을 안내해드립니다.
 
 ## Installation
 목적에 따라 debug나 release를 선택할 수 있습니다.
