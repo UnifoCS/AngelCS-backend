@@ -12,6 +12,9 @@ bp = Blueprint(__name__, __name__)
 @bp.route("/dashboard")
 @json_api
 def get_dashboard():
+    """
+    대시보드 정보를 리턴하는 API
+    """
     dashboard = g.app.services.dashboard
     to_date = datetime.today() + timedelta(days=1)
     from_date = to_date - timedelta(days=5)

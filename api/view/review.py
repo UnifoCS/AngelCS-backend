@@ -12,21 +12,13 @@ bp = Blueprint(__name__, __name__)
 @json_api
 def get_review_list():
     """
-    # 결과 예시
-    for i in range(1, 30):
-        item = {
-            "id": i, # Review ID(int)
-            "author": f"Test-{i}", # 리뷰 작성자 이름(string)
-            "score": random.random() * 5, # 점수(int)
-            "updated_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 변경일(변경하지 않았을 경우 created_at과 동일한 값)
-            "created_at": "2019-01-11", # (date, yyyy-MM-dd) 리뷰 작성일
-            "is_replied": False, # (boolean) 이미 답변이 달렸는가
-            "tags": [ # 태그 목록, 없으면 빈 목록
-                { "id": 1234, "name": "긍정" },
-                { "id": 1235, "name": "질문" }
-            ]
-        }
-        items.append(item)
+        리뷰 목록을 가져옴. 
+        HTTP Parameters
+        - page: 가져올 페이지(1부터 시작)
+        - 가져올 페이지의 크기, 기본 30
+        - sort: 정렬할 기준
+        - order: 정렬 순서, 기본 내림차순 (desc) 혹은 오름차순(asc)
+        - filter: 기본값(모두), replied(답변 된것만), unreplied(답변 안된 것만)
     """
     page = int(request.args.get('page', '1')) - 1
     page_size = int(request.args.get('page_size', '30'))
@@ -49,7 +41,10 @@ def get_review_list():
 @bp.route("/review/<int:id>")
 @json_api
 def get_review(id):
-    # TODO: Not implemented
+    """
+        특정 리뷰의 Detail을 가져오는 API
+        tag, 추천 template까지 가져옴
+    """
     review = g.app.services.review.get_review(id)
     result = review.as_dict()
 
@@ -92,6 +87,12 @@ def get_review(id):
 @bp.route("/review/<int:id>/reply", methods=["POST"])
 @json_api
 def reply_review(id):
+    """
+        리뷰에 답글을 다는 API
+        Content-Type: application/json
+        URL의 id는 답글을 달 리뷰의 ID,
+        Body에 json으로 데이터 전송, reply에는 답글 내용을 입력.
+    """
     params = request.json
     reply = params['reply']
 
