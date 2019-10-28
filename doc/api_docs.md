@@ -146,7 +146,7 @@ Parameter
 }
 ```
 ## 리뷰에 답글 달기
-
+기존에 답글이 달린 리뷰일 경우 답글이 변경됨.
 ### 요청
 ```json
 POST /review/{id}/reply
@@ -218,4 +218,45 @@ No Result
     "updated_date": "2019-09-26T12:48:13.932489"
   }
 ]
+```
+
+## 템플릿 생성하기
+<b>요청</b>
+```json
+POST /templates
+
+{
+  "title": "제목",
+  "content": "안녕하세요 [name]님, ...",
+  "conditions": {
+    "rating": "=5",
+    "tags": [ 1 ],
+    "keywords": ["버그", "문제", "에러"]
+  }
+}
+```
+
+<b>params</b><br>
+- conditions.ratings - String<br>
+정규식: [(>=)(<=)<>=]\d<br>
+예시: =5(별점 5점), <=4(별점 4점 이하), >3(별점 3점 이상)
+- tags - List&lt;Int>: 템플릿을 적용할 리뷰가 가지고 있어야 할 태그들의 ID. 예를 들어 1, 2 태그가 있는 리뷰에 적용될 템플릿
+- keywords: List<String>: 템플릿을 적용할 리뷰가 갖고 있어야 할 키워드(단어) 목록. <u><b>최대 10개</b></u><br>
+  
+<b>응답</b><br>
+201 Created, 400 Bad Argument
+
+## 템플릿 수정하기
+이미 제작된 템플릿을 수정함.
+```
+PUT /template/{id}
+
+# id: 수정할 템플릿의 ID
+# 내용은 POST /templates 와 동일
+```
+
+## 템플릿 삭제하기
+```
+DELETE /template/{id}
+# id: 삭제할 템플릿의 ID
 ```
