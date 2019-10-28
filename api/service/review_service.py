@@ -46,7 +46,8 @@ class ReviewService(BaseDatabaseService):
 
             # insert loaded models
             self.session.add_all(models)
-
+            self.session.commit()
+            
             return True
         else:
             return False

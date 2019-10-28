@@ -26,7 +26,7 @@ class TemplateService(BaseDatabaseService):
 
             for t in templates:
 
-                for tc in templates.conds:
+                for tc in templates.conditions:
                     if tc.operator == "tag_in":
                         tag_ids = t.operand2.split(",")
                         score = score + sum([x in review_tag_ids for x in tag_ids])
@@ -79,3 +79,49 @@ class TemplateService(BaseDatabaseService):
             .all()
         templates = [x.template for x in conds]
         return templates
+
+    def add_template(self, template):
+        template_model = Template()
+        template_model.name = template['name']
+        template_model.content = template['content']
+
+        conds = template['conditions'] 
+
+        if 'rating' in conds:
+            rating = conds['rating']
+            op = rating[0] if rating[0] == '=' else rating[:2]
+            opr1 = 'rating'
+            opr2 = rating[1:] if rating[0] == '=' else rating[2:]
+
+            conds.conditions.add(
+                TemplateCondition(
+                    operand1=opr1,
+                    operand2=opr2,
+                    operator=op
+                )
+            )
+        
+        if 'tags' in conds:
+            op = 'tag_in'
+            opr2 = ','.join(conds['tags'])
+
+            conds.conditions.add(
+                TemplateCondition(
+                    operand2=opr2,
+                    operator=op
+                )
+            )
+        
+        if 'keywords' in conds:
+            op = 'keyword_in'
+            opr2 = ','.join(conds['keywords'])
+
+            conds.conditions.add(
+                TemplateCondition(
+                    operand2=opr2,
+                    operator=op
+                )
+            )
+
+        self.db.session.commit()
+        return True
