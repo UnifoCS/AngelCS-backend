@@ -133,6 +133,7 @@ class TemplateService(BaseDatabaseService):
         return True
     
     def delete_by_id(self, id):
-        self.query(Template).filter_by(id=id).delete()
-        return True
+        c = self.query(Template).filter_by(id=id).delete()
+        self.db.commit()
+        return c > 0
 

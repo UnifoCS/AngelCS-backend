@@ -20,6 +20,9 @@ class DashboardService(BaseDatabaseService):
     def get_review_count_unreplied(self):
         return self.query(func.count(Review.id)).filter_by(is_replied=False).scalar()
 
+    def get_recent_reviews(self, count=5):
+        return self.query(Review).order_by(Review.created_date.desc()).limit(count).all()
+
     def get_review_average_by_days(self, from_date, to_date):
         dt = from_date
         avgs = []
