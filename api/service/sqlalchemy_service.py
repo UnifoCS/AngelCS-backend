@@ -15,6 +15,9 @@ class SQLAlchemyService(BaseService):
         self.session = scoped_session(sessionmaker(
             bind=self.engine
             ))
+        # self.session = sessionmaker(
+        #     bind=self.engine
+        # )()
         # Base.query = self.session.query_property()
         # self.session = Session()
 

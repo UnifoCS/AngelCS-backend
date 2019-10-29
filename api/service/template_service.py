@@ -13,57 +13,58 @@ class TemplateService(BaseDatabaseService):
         templates = self.query(Template).all()
         return templates
 
-    def recommendate_template(self, reviews):
+    def recommendate_templates(self, review):
         templates = self.get_all_templates()
-        recommends = []
+        candidates = []
 
-        for review in reviews:
-            candidates = []
+        review_tag_ids = [str(t.id) for t in review.tags]
+        has_tag = len(review_tag_ids) > 0
 
-            review_tag_ids = [str(t.id) for t in review.tags]
-            ok = 0
+        for t in templates:
             score = 0
+            ok = 0
 
-            for t in templates:
+            for tc in t.conditions:
+                result = False
 
-                for tc in templates.conditions:
-                    if tc.operator == "tag_in":
-                        tag_ids = t.operand2.split(",")
-                        score = score + sum([x in review_tag_ids for x in tag_ids])
-                        ok = ok + 1
+                if has_tag and tc.operator == "in" and tc.operand1 == 'tag':
+                    tag_ids = tc.operand2.split(",")
+                    havings = sum([x in review_tag_ids for x in tag_ids])
+                    result = havings > 0
 
-                    elif tc.operator == "keyword_in":
-                        keywords = t.operand2.split(",")
-                        score = score + sum([k in review.content for k in keywords])
-                        ok = ok + 1
+                elif tc.operator == "in" and tc.operand1 == 'keyword':
+                    keywords = tc.operand2.split(",")
+                    havings = sum([k in review.content for k in keywords])
+                    result = havings > 0
 
-                    if tc.operand1 == "rating":
-                        score = score + 1
-                        result = False 
+                elif tc.operand1 == "rating":
 
-                        if tc.operator == "=":
-                            result = review.rating == int(t.operand2)
-                        elif tc.operator == ">":
-                            result = review.rating > int(t.operand2)
-                        elif tc.operator == ">=":
-                            result = review.rating >= int(t.operand2)
-                        elif tc.operator == "<":
-                            result = review.rating < int(t.operand2)
-                        elif tc.operator == "<=":
-                            result = review.rating <= int(t.operand2)
-                        
-                        if result:
-                            ok = ok + 1
+                    if tc.operator == "=":
+                        result = review.rating == int(tc.operand2)
+                    elif tc.operator == ">":
+                        result = review.rating > int(tc.operand2)
+                    elif tc.operator == ">=":
+                        result = review.rating >= int(tc.operand2)
+                    elif tc.operator == "<":
+                        result = review.rating < int(tc.operand2)
+                    elif tc.operator == "<=":
+                        result = review.rating <= int(tc.operand2)
+                    
+                if result:
+                    score = score + 1
+                    ok = ok + 1
+        
+            # template conditions 을 모두 만족해야함. ok 로 카운팅
+            # score는 점수
+            if score > 0 and ok == len(t.conditions):
+                candidates.append((t, ok))
             
-                # template conditions 을 모두 만족해야함. ok 로 카운팅
-                # score는 점수
-                if score > 0 and ok == len(t.conds):
-                    candidates.append((t, score))
-                
-            candidates = sorted(candidates, lambda x: x[1])
-            recommends.append(candidates)
+        candidates = reversed(sorted(candidates, key=lambda x: x[1]))
+        candidates = list(candidates)
+        
+        # print(candidates)
 
-        return recommends
+        return [c[0] for c in candidates]
 
     def get_template_by_tags(self, tags):
         if not tags:
@@ -81,19 +82,19 @@ class TemplateService(BaseDatabaseService):
         return templates
 
     def add_template(self, template):
-        template_model = Template()
-        template_model.name = template['name']
+        template_model = Template(channel_id=0)
+        template_model.name = template['title']
         template_model.content = template['content']
 
         conds = template['conditions'] 
 
         if 'rating' in conds:
             rating = conds['rating']
-            op = rating[0] if rating[0] == '=' else rating[:2]
+            op = rating[:2] if rating[1] == '=' else rating[0]
             opr1 = 'rating'
-            opr2 = rating[1:] if rating[0] == '=' else rating[2:]
+            opr2 = rating[2:] if rating[1] == '=' else rating[1:]
 
-            conds.conditions.add(
+            template_model.conditions.append(
                 TemplateCondition(
                     operand1=opr1,
                     operand2=opr2,
@@ -102,28 +103,33 @@ class TemplateService(BaseDatabaseService):
             )
         
         if 'tags' in conds:
-            op = 'tag_in'
-            opr2 = ','.join(conds['tags'])
+            op = 'in'
+            opr1 = "tag"
+            opr2 = ','.join(list(map(lambda x: str(x), conds['tags'])))
 
-            conds.conditions.add(
+            template_model.conditions.append(
                 TemplateCondition(
+                    operand1=opr1,
                     operand2=opr2,
                     operator=op
                 )
             )
         
         if 'keywords' in conds:
-            op = 'keyword_in'
-            opr2 = ','.join(conds['keywords'])
+            op = 'in'
+            opr1 = "keyword"
+            opr2 = ','.join(list(map(lambda x: str(x), conds['keywords'])))
 
-            conds.conditions.add(
+            template_model.conditions.append(
                 TemplateCondition(
+                    operand1=opr1,
                     operand2=opr2,
                     operator=op
                 )
             )
 
-        self.db.session.commit()
+        self.db.add(template_model)
+        self.db.commit()
         return True
     
     def delete_by_id(self, id):

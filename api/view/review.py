@@ -51,7 +51,7 @@ def get_review(id):
     if review.tags:
         result["tags"] = [x.as_dict() for x in review.tags]
 
-    templates = g.app.services.template.get_template_by_tags(review.tags)
+    templates = g.app.services.template.recommendate_templates(review)
     if templates:
         result["recommended_templates"] = [x.as_dict(conditions=True) for x in templates]
 
