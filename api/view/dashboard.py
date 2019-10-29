@@ -28,17 +28,29 @@ def get_dashboard():
             }
         },
         {
-            "type": "review_average",
-            "item": {
-                "review_average_score": 3.5, # 리뷰 평균
-                "review_average_history": dashboard.get_review_average_by_days(from_date, to_date)
-                # "review_average_history": [ # 리뷰 내역
-                    # { "date": "yyyy-MM-dd", "score": 3.5  },
-                    # { "date": "yyyy-MM-dd", "score": 3.4  },
-                    # { "date": "yyyy-MM-dd", "score": 3.3  },
-                    # { "date": "yyyy-MM-dd", "score": 3.2  },
-                    # { "date": "yyyy-MM-dd", "score": 3.1  }
-                # ]
-            }
+            "type": "review_count_by_tag",
+            "item": dashboard.get_review_count_by_tag()
+        },
+        {
+            "type": "review_count_by_rating",
+            "item": dashboard.get_review_count_by_rating()
+        },
+        {
+            "type": "recent_reviews",
+            "item": [x.as_dict() for x in dashboard.get_recent_reviews()]
         }
+        # {
+        #     "type": "review_average",
+        #     "item": {
+        #         "review_average_score": 3.5, # 리뷰 평균
+        #         "review_average_history": dashboard.get_review_average_by_days(from_date, to_date)
+        #         # "review_average_history": [ # 리뷰 내역
+        #             # { "date": "yyyy-MM-dd", "score": 3.5  },
+        #             # { "date": "yyyy-MM-dd", "score": 3.4  },
+        #             # { "date": "yyyy-MM-dd", "score": 3.3  },
+        #             # { "date": "yyyy-MM-dd", "score": 3.2  },
+        #             # { "date": "yyyy-MM-dd", "score": 3.1  }
+        #         # ]
+        #     }
+        # }
     ], 200

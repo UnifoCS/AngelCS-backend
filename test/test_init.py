@@ -1,4 +1,6 @@
 import math
+import json
+
 import pandas as pd
 
 from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel, TemplateCondition, Template
@@ -34,62 +36,16 @@ def test():
     positive_tag = Tag(id=0, name="긍정")
     negative_tag = Tag(id=1, name="부정")
     question_tag = Tag(id=2, name="문의")
+    aggressive_tag = Tag(id=3, name="공격적")
 
     session.add(positive_tag)
     session.add(negative_tag)
+    session.add(question_tag)
+    session.add(aggressive_tag)
     session.commit()
 
     # 템플릿을 추가합니다.
-    template_data_list = [
-        {
-            "title": "감사답글 - 5점 긍정",
-            "content": "[name]님 감사합니다.\n앞으로도 좋은 서비스 이어나가겠습니다.",
-            "conditions": {
-                "tags": [0],
-                "rating": "=5"
-            }
-        },
-        {
-            "title": "감사답글 - 5점 미만 긍정",
-            "content": "[name]님 감사합니다.\n앞으로도 좋은 서비스 이어나가겠습니다. 별점도 5점 주시면 감사하겠습니다.",
-            "conditions": {
-                "tags": [0],
-                "rating": "<5"
-            }
-        },
-        {
-            "title": "사과답글 - 5점 부정",
-            "content": "[name]님 안녕하세요.\n서비스의 불만족스러운 부분을 개선하기위해 노력하겠습니다.\n감사합니다.",
-            "conditions": {
-                "tags": [1],
-                "rating": "=5"
-            }
-        },
-        {
-            "title": "사과답글 - 1점 부정",
-            "content": "[name]님 안녕하세요.\n서비스의 불만족스러운 부분을 개선하기위해 노력하겠습니다. 별점도 5점 주시면 저희가 개발하는데 힘이 날 것 같습니다.\n감사합니다.",
-            "conditions": {
-                "tags": [1],
-                "rating": "<5"
-            }
-        },
-        {
-            "title": "문의답글 - 5점",
-            "content": "[name]님 안녕하세요.\n문의해주신 내용 접수하였습니다.\n\n\n감사합니다.",
-            "conditions": {
-                "tags": [2],
-                "rating": "=5"
-            }
-        },
-        {
-            "title": "문의답글 - 5점",
-            "content": "[name]님 안녕하세요.\n문의해주신 내용 접수하였습니다.\n\n\n별점 5점 부탁드립니다. 감사합니다.",
-            "conditions": {
-                "tags": [2],
-                "rating": "<5"
-            }
-        }
-    ]
+    template_data_list = json.load(open("test/data/templates.json"))
 
     for t in template_data_list:
         app.services.template.add_template(t)
@@ -119,6 +75,8 @@ def test():
         )
         sentiment = data.loc[i, 'pos/neg 예측']
         review.is_aggressive = data.loc[i, '욕설여부'] == '욕설'
+        if review.is_aggressive:
+            review.tags.append(aggressive_tag)
 
         if sentiment == '긍정':
             review.tags.append(positive_tag)
