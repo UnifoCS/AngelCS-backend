@@ -206,7 +206,7 @@ class Template(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
     name = Column(String(32), nullable=False)
     content = Column(String, nullable=False)
 
-    conditions = relationship("TemplateCondition", backref="template")
+    conditions = relationship("TemplateCondition", backref="template", cascade="all, delete-orphan")
 
 
     def as_dict(self, conditions=False):

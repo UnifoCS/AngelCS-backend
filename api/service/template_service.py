@@ -125,3 +125,8 @@ class TemplateService(BaseDatabaseService):
 
         self.db.session.commit()
         return True
+    
+    def delete_by_id(self, id):
+        self.query(Template).filter_by(id=id).delete()
+        return True
+
