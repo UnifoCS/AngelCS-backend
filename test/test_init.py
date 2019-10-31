@@ -9,6 +9,7 @@ from api import App
 import api.globals as g
 from configs import DefaultConfig
 from configs.test import TestConfig
+from datetime import datetime
 
 
 
@@ -57,21 +58,28 @@ def test():
 
     for i in data.index:
         author = data.loc[i, 'author']
+        date = data.loc[i, 'date']
         content=data.loc[i, 'comment']
         title= content[:10] if len(content) > 10 else content 
         rating= int(data.loc[i, 'rating'])
+
+        if '년' in date:
+            date = datetime.strptime(date, "%Y년 %m월 %d일").date()
+        else:
+            date = datetime.strptime(date, "%Y.%m.%d").date()
 
         review = Review(
             title=title,
             author=author,
             content=content,
             rating=rating,
-            channel_id=channel.id
+            channel_id=channel.id,
+            created_date=date
         )
         
         result = tagger.predict(content)
 
-        if result['is_aggressive'] > 0.5:
+        if rating == 1 and result['is_aggressive'] > 0.5:
             review.tags.append(aggressive_tag)
         if result['sentiment'] == 'pos':
             review.tags.append(positive_tag)
