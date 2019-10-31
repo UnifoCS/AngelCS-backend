@@ -64,16 +64,19 @@ class BaseTaggingService:
         self.aggressive_vocab = json.load(open("res/aggressive.json"))
         self.sentiment_clf = SentimentClassifier("res/sentiment_model.json", "res/sentiment_model.h5", self.vocab)
         self.contact_clf = CharacterBasedNNClassifier("res/contact.h5", self.vocab)
-        self.aggressive_clf = CharacterBasedNNClassifier("res/contact.h5", self.aggressive_vocab, 128)
+        self.aggressive_clf = CharacterBasedNNClassifier("res/aggressive.h5", self.aggressive_vocab, 128)
 
 
     def predict(self, text):
         sent = ['pos', 'neg', 'nat']
+
+        text128 = encode_text(text, self.aggressive_vocab, 128)
         text = encode_text(text, self.vocab, self.sequence_length)
+
         result = {
             'sentiment': sent[np.argmax(self.sentiment_clf.predict(text))],
             'is_contact': self.contact_clf.predict(text)[1],
-            'is_aggressive': self.aggressive_clf.predict(text)[1]
+            'is_aggressive': self.aggressive_clf.predict(text128)[0]
         }   
 
         return result

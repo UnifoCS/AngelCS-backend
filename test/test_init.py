@@ -3,16 +3,18 @@ import json
 
 import pandas as pd
 
+from api.service.tagging_service import BaseTaggingService
 from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel, TemplateCondition, Template
 from api import App
 import api.globals as g
 from configs import DefaultConfig
-from configs.debug import DebugConfig
+from configs.test import TestConfig
 
 
 
 def test():
-    app = App(DebugConfig())
+    app = App(TestConfig())
+    tagger = BaseTaggingService()
     sql_alchemy = app.services.sql_alchemy
     session = sql_alchemy.session
 
@@ -50,21 +52,14 @@ def test():
     for t in template_data_list:
         app.services.template.add_template(t)
 
-    data = pd.read_csv("test/data/samples.csv").sample(frac=1)
-    print(data)
+    data = pd.read_csv("test/data/google_play_sample_125.csv").sample(frac=1)
+    print(data.head())
 
     for i in data.index:
-        title=data.loc[i, 'Title']
-        author = data.loc[i, 'Author']
-        content=data.loc[i, 'Text']
-        rating=int(data.loc[i, 'Rating'])
-
-        print(rating)
-
-        if math.isnan(rating) or \
-            (type(title) is float and math.isnan(title)) \
-                or (type(content) is float and math.isnan(content)):
-            continue
+        author = data.loc[i, 'author']
+        content=data.loc[i, 'comment']
+        title= content[:10] if len(content) > 10 else content 
+        rating= int(data.loc[i, 'rating'])
 
         review = Review(
             title=title,
@@ -73,17 +68,16 @@ def test():
             rating=rating,
             channel_id=channel.id
         )
-        sentiment = data.loc[i, 'pos/neg 예측']
-        review.is_aggressive = data.loc[i, '욕설여부'] == '욕설'
-        if review.is_aggressive:
-            review.tags.append(aggressive_tag)
-
-        if sentiment == '긍정':
-            review.tags.append(positive_tag)
-        elif sentiment == '부정':
-            review.tags.append(negative_tag)
         
-        if '?' in review.content or '?' in review.title:
+        result = tagger.predict(content)
+
+        if result['is_aggressive'] > 0.5:
+            review.tags.append(aggressive_tag)
+        if result['sentiment'] == 'pos':
+            review.tags.append(positive_tag)
+        elif result['sentiment'] == 'nat':
+            review.tags.append(negative_tag)
+        if result['is_contact'] > 0.5:
             review.tags.append(question_tag)
 
         session.add(review)
