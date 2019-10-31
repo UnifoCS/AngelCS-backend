@@ -37,7 +37,7 @@ def get_dashboard():
         },
         {
             "type": "recent_reviews",
-            "item": [x.as_dict() for x in dashboard.get_recent_reviews()]
+            "item": [x.as_dict(tags=True) for x in dashboard.get_recent_reviews()]
         }
         # {
         #     "type": "review_average",
