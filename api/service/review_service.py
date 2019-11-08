@@ -15,43 +15,7 @@ class ReviewService(BaseDatabaseService):
 
     """
     
-    def load_from_google_play(self):
-        pkg = ""
-        access_token = ""
-        url = f"https://www.googleapis.com/androidpublisher/v3/applications/{pkg}/reviews?access_token={access_token}&maxResults=100"
-
-        res = requests.get(url)
-        if int(res.status_code / 100) == 2:
-            result = json.loads(res.text)
-            reviews = result['reviews']
-
-            models = []
-            for review in reviews:
-                model = Review()
-                model.id = int(review['id'])
-                model.author = review['authorName']
-
-                for comment in review['comments']:
-                    
-                    if "userComment" in comment:
-                        model.title = comment['text']
-                        model.content = comment['text']
-                        model.rating = comment['starRating']
-
-                    if "developerComment" in comment:
-                        model.is_replied = True
-                        model.reply = comment['text']
-
-                models.append(model)
-
-            # insert loaded models
-            self.session.add_all(models)
-            self.session.commit()
-            
-            return True
-        else:
-            return False
-
+    
     def get_review(self, id):
         return self.query(Review).filter_by(id=id).first()
 
@@ -83,20 +47,11 @@ class ReviewService(BaseDatabaseService):
             r.is_replied = True
             r.reply = reply
             self.commit()
+
+            if r.rid:
+                self.app.services.gcp.reply_review(r.rid, reply)
+                
             return True
         else:
             return False
 
-    def reply_google_play(self, id, reply_text):
-        access_token = ""
-        pkg = ""
-        url = f"https://www.googleapis.com/androidpublisher/v3/applications/{pkg}/reviews/" + \
-                f"{id}:reply?access_token={access_token}"
-
-        content = {
-            "replyText": reply_text
-        }
-
-        res = requests.post(url, json=content)
-
-        return int(res.status_code / 100) == 2

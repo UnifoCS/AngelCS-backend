@@ -131,6 +131,7 @@ class Review(Base, BaseModel, IdMixin, TimestampMixin, ReferenceChannelMixin):
     """
     리뷰 테이블을 나타내는 클래스로, 하나의 채널에 종속된다.
     """
+    rid = Column(String)
     title = Column(String(64), nullable=False)
     author = Column(String(32), nullable=False)
     content = Column(String(1024), nullable=False)

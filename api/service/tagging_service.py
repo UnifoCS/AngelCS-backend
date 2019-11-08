@@ -10,6 +10,8 @@ import numpy as np
 import keras
 import os
 
+from . import BaseService
+
 print(os.getcwd())
 
 
@@ -56,9 +58,11 @@ class SentimentClassifier():
         return p[0]
 
 
-class BaseTaggingService:
+class TaggingService(BaseService):
 
-    def __init__(self):
+    def __init__(self, app):
+        super().__init__(app)
+
         self.sequence_length = 256
         self.vocab = json.load(open("res/vocab.json"))
         self.aggressive_vocab = json.load(open("res/aggressive.json"))

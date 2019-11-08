@@ -20,7 +20,8 @@ def from_arg_module():
         return debug.DebugConfig()
 
     else:
-        return DefaultConfig()
+        from . import release
+        return release.ReleaseConfig()
 
 
 class DefaultConfig(dict):

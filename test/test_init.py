@@ -3,19 +3,19 @@ import json
 
 import pandas as pd
 
-from api.service.tagging_service import BaseTaggingService
+from api.service.tagging_service import TaggingService
 from api.model.sqlalchemy import User, Channel, Review, Tag, LinkUserChannel, TemplateCondition, Template
 from api import App
 import api.globals as g
 from configs import DefaultConfig
-from configs.test import TestConfig
+from configs.release import ReleaseConfig
 from datetime import datetime
 
 
 
 def test():
-    app = App(TestConfig())
-    tagger = BaseTaggingService()
+    app = App(ReleaseConfig())
+    tagger = app.services.tagging
     sql_alchemy = app.services.sql_alchemy
     session = sql_alchemy.session
 
@@ -84,7 +84,7 @@ def test():
             review.is_aggressive = True
         if result['sentiment'] == 'pos':
             review.tags.append(positive_tag)
-        elif result['sentiment'] == 'nat':
+        elif result['sentiment'] == 'neg':
             review.tags.append(negative_tag)
         if result['is_contact'] > 0.5:
             review.tags.append(question_tag)
