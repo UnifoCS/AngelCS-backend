@@ -88,8 +88,8 @@ class TemplateService(BaseDatabaseService):
 
         conds = template['conditions'] 
 
-        if 'rating' in conds:
-            rating = conds['rating']
+        if 'ratings' in conds:
+            rating = conds['ratings']
             op = rating[:2] if rating[1] == '=' else rating[0]
             opr1 = 'rating'
             opr2 = rating[2:] if rating[1] == '=' else rating[1:]

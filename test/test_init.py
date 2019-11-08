@@ -81,6 +81,7 @@ def test():
 
         if rating == 1 and result['is_aggressive'] > 0.5:
             review.tags.append(aggressive_tag)
+            review.is_aggressive = True
         if result['sentiment'] == 'pos':
             review.tags.append(positive_tag)
         elif result['sentiment'] == 'nat':

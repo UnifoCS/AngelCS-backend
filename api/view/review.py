@@ -21,7 +21,7 @@ def get_review_list():
         - filter: 기본값(모두), replied(답변 된것만), unreplied(답변 안된 것만)
     """
     page = int(request.args.get('page', '1')) - 1
-    page_size = int(request.args.get('page_size', '30'))
+    page_size = int(request.args.get('page_size', '1000'))
     sort = request.args.get('sort', 'updated_date')
     order = request.args.get('order', 'desc')
     filter = request.args.get('filter', None)
